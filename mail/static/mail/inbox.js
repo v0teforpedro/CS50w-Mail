@@ -37,7 +37,10 @@ function load_mailbox(mailbox) {
 
     // Show the mailbox name + create new div to separate h3 from emails
     document.querySelector('#emails-view').innerHTML = `
-        <h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>
+        <div class="d-grid gap-2 col-3 mx-auto">
+            <button class="btn btn-secondary btn-lg disabled" id="block-name">${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</button>
+        </div>
+        
         <div id="emails-box"></div>
     `;
 
@@ -50,16 +53,29 @@ function load_mailbox(mailbox) {
 
         // Loop over emails and create HTML element for each one
         emails.forEach(email => {
-
             const element = document.createElement('div');
-            element.innerHTML = `
-                <p>FROM: ${email.sender}</p>
-                <p>TO: ${email.recipients}</p>
-                <p>Subject: ${email.subject}</p>
-                <p>${email.timestamp}</p>
-            `;
+
+            // alter innerHTML display for  different mailboxes, using common if/else check
+            if (mailbox === 'sent') {
+                element.innerHTML = `
+                    <p>TO: ${email.recipients}</p>
+                    <p>Subject: ${email.subject}</p>
+                    <p>${email.timestamp}</p>
+                `;
+            } else {
+                element.innerHTML = `
+                    <p>FROM: ${email.sender}</p>
+                    <p>Subject: ${email.subject}</p>
+                    <p>${email.timestamp}</p>
+                `;
+            }
+
             element.className = 'd-flex justify-content-between list-group-item';
-            element.id = 'test-id'
+
+            // another way to use 'if/else' statement:
+            // (if email.read is true, then set 'element.id' to 'read', otherwise to 'unread')
+            element.id = email.read ? 'read': 'unread';
+
             element.addEventListener('click', function() {
                 console.log(email)
             });

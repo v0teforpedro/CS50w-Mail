@@ -2,38 +2,45 @@
 {% load static %}
 
 {% block body %}
+    <div class="row">
+        <div class="col-md-2 mb-1">
+            <button type="button" id="compose" class="btn btn-lg btn-success"><i class="bi bi-vector-pen"></i> Compose</button>
+        </div>
+        <div class="col-md-10">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
 
-<ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="inbox" data-bs-toggle="tab" type="button" role="tab" aria-selected="true">Inbox</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="sent" data-bs-toggle="tab" type="button" role="tab" aria-selected="false">Sent</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="archived" data-bs-toggle="tab" type="button" role="tab" aria-selected="false">Archived</button>
+                </li>
 
-    <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="inbox" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Inbox</button>
-    </li>
-    <li class="nav-item" role="presentation">
-        <button class="nav-link" id="compose" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Compose</button>
-    </li>
-    <li class="nav-item" role="presentation">
-        <button class="nav-link" id="sent" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Sent</button>
-    </li>
-    <li class="nav-item" role="presentation">
-        <button class="nav-link" id="archived" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Archived</button>
-    </li>
+                <ul class="nav nav-pills ms-auto" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">{{ request.user.email }}</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="btn btn-outline-primary" href="{% url 'logout' %}" type="button">Log Out</a>
+                    </li>
+                </ul>
 
-    <ul class="nav nav-pills ms-auto" id="myTab" role="tablist">
-        <li class="nav-item" role="presentation">
-            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">{{ request.user.email }}</a>
-        </li>
-        <li class="nav-item" role="presentation">
-            <a class="btn btn-outline-primary" href="{% url 'logout' %}" type="button">Log Out</a>
-        </li>
-    </ul>
+            </ul>
+        </div>
 
-</ul>
+    </div>
+
 
     <div id="emails-view">
     </div>
 
     <div id="compose-view">
-        <h3>New Email</h3>
+        <div class="d-grid gap-2 col-3 mx-auto">
+            <button class="btn btn-secondary btn-lg disabled" id="block-name">New Email</button>
+        </div>
         <form id="compose-form">
             <div class="form-group">
                 From: <input disabled class="form-control" value="{{ request.user.email }}">

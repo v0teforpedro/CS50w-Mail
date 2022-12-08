@@ -2,11 +2,6 @@ textarea {
     min-height: 400px;
 }
 
-h3 {
-    margin: 20px;
-    text-align: center;
-}
-
 p {
     margin-bottom: 0;
 }
@@ -15,13 +10,20 @@ p {
     margin-top: 20px;
 }
 
+#read {
+    background-color: lightgray;
+}
+
+#unread {
+    font-weight: bold;
+}
 
 #emails-box {
     max-height: 75vh;
     overflow-y: auto;
-    /*padding: 10px;*/
 }
 
-/*#test-id {*/
-/*    border: 1px solid;*/
-/*}*/
+#block-name {
+    margin: 15px;
+    border-radius: 50px;
+}
