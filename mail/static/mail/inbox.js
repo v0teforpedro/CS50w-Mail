@@ -131,11 +131,17 @@ function view_mail(email_id) {
             // create content view
             const element = document.createElement('div');
             element.innerHTML = `
-                <p>${email.sender}</p>
-                <p>${email.recipients}</p>
-                <p>${email.subject}</p>
-                <p>${email.timestamp}</p>
-                <p>${email.body}</p>
+                
+                <div class="card text-dark bg-light mb-3" style="max-width: 18rem;">
+                    <div class="card-header">FROM: ${email.sender}</div>
+                    <div class="card-header">TO: ${email.recipients}</div>
+                    <div class="card-header">Subject: ${email.subject}</div>
+                    <div class="card-body">
+                        <h5 class="card-title">${email.body}</h5>
+                        <p class="card-text">${email.timestamp}</p>
+                    </div>
+                </div>
+                
             `;
 
             // element.addEventListener('click', function() {
