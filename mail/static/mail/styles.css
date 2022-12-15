@@ -10,6 +10,11 @@ p {
     margin-top: 20px;
 }
 
+.form-group {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
 #read {
     background-color: lightgray;
 }
@@ -26,4 +31,8 @@ p {
 #block-name {
     margin: 15px;
     border-radius: 50px;
+}
+
+#compose-btn {
+    margin-top: 10px;
 }
