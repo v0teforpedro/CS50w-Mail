@@ -16,7 +16,7 @@ p {
 }
 
 #read {
-    background-color: lightgray;
+    background-color: #e9ecef;
 }
 
 #unread {
@@ -35,4 +35,8 @@ p {
 
 #compose-btn {
     margin-top: 10px;
+}
+
+#letter-view {
+    margin-top: 100px;
 }

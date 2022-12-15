@@ -122,33 +122,60 @@ function view_mail(email_id) {
     fetch(`/emails/${email_id}`)
         .then(response => response.json())
         .then(email => {
-            // Print email
-            console.log(email.id);
 
             // clear previous content
             document.querySelector('#letter-view').innerHTML = '';
 
             // create content view
             const element = document.createElement('div');
+            element.className = 'd-flex justify-content-center';
             element.innerHTML = `
-                
-                <div class="card text-dark bg-light mb-3" style="max-width: 18rem;">
-                    <div class="card-header">FROM: ${email.sender}</div>
+                <div class="card text-dark bg-light mb-3 w-75">
+                    <div class="card-header">
+                        <h3>${email.subject}</h3>
+                    </div>
+                    <div class="card-header">
+                        FROM: <strong>${email.sender}</strong>
+                    </div>
                     <div class="card-header">TO: ${email.recipients}</div>
-                    <div class="card-header">Subject: ${email.subject}</div>
+                    
                     <div class="card-body">
-                        <h5 class="card-title">${email.body}</h5>
-                        <p class="card-text">${email.timestamp}</p>
+                        <p class="card-title">${email.body}</p>
+                        <hr>
+                        <p class="card-text text-end"><i>${email.timestamp}</i></p>
                     </div>
                 </div>
-                
             `;
 
-            // element.addEventListener('click', function() {
-            //     console.log('This element has been clicked!')
-            // });
+            // setting 'read' as true on click
+            change_sate(email, 'read')
 
             // append content to our div
             document.querySelector('#letter-view').append(element);
         });
+}
+
+function change_sate(email, property) {
+
+    // set 'read' to true on click
+    if (property === 'read') {
+        fetch(`/emails/${email.id}`, {
+            method: 'PUT',
+            body: JSON.stringify({
+                read: true
+            })
+        })
+        .then(response => response.json())
+
+    // set archived to opposite state
+    } else if (property === 'archived') {
+        fetch(`/emails/${email.id}`, {
+            method: 'PUT',
+            body: JSON.stringify({
+                archived: !email.archived
+            })
+        })
+        .then(response => response.json())
+    }
+
 }
