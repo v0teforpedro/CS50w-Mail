@@ -37,7 +37,7 @@ function load_mailbox(mailbox) {
     document.querySelector('#compose-view').style.display = 'none';
     document.querySelector('#letter-view').style.display = 'none';
 
-    // Show the mailbox name + create new div to separate h3 from emails
+    // Show the mailbox name + create new div to separate mailbox name from emails
     document.querySelector('#emails-view').innerHTML = `
         <div class="d-grid gap-2 col-3 mx-auto">
             <button class="btn btn-secondary btn-lg disabled" id="block-name">${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</button>
@@ -78,8 +78,9 @@ function load_mailbox(mailbox) {
             // (if email.read is true, then set 'element.id' to 'read', otherwise to 'unread')
             element.id = email.read ? 'read': 'unread';
 
+            // on click for each email in mailbox - view that exact email
             element.addEventListener('click', function() {
-                console.log(email)
+                view_mail(email.id)
             });
             document.querySelector('#emails-box').append(element);
 
@@ -109,4 +110,39 @@ function send_mail() {
       load_mailbox('sent');
   });
 
+}
+
+function view_mail(email_id) {
+
+    // Show the mailbox and hide other views
+    document.querySelector('#emails-view').style.display = 'none';
+    document.querySelector('#compose-view').style.display = 'none';
+    document.querySelector('#letter-view').style.display = 'block';
+
+    fetch(`/emails/${email_id}`)
+        .then(response => response.json())
+        .then(email => {
+            // Print email
+            console.log(email.id);
+
+            // clear previous content
+            document.querySelector('#letter-view').innerHTML = '';
+
+            // create content view
+            const element = document.createElement('div');
+            element.innerHTML = `
+                <p>${email.sender}</p>
+                <p>${email.recipients}</p>
+                <p>${email.subject}</p>
+                <p>${email.timestamp}</p>
+                <p>${email.body}</p>
+            `;
+
+            // element.addEventListener('click', function() {
+            //     console.log('This element has been clicked!')
+            // });
+
+            // append content to our div
+            document.querySelector('#letter-view').append(element);
+        });
 }
