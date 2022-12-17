@@ -53,9 +53,14 @@ function load_mailbox(mailbox) {
         // Print emails
         console.log(emails);
 
+        // creating 'ul' list-group element
+        const list = document.createElement('ul');
+        list.className = 'list-group'
+        list.id = 'ul-id'
+
         // Loop over emails and create HTML element for each one
         emails.forEach(email => {
-            const element = document.createElement('div');
+            const element = document.createElement('li');
 
             // alter innerHTML display for  different mailboxes, using common if/else check
             if (mailbox === 'sent') {
@@ -82,7 +87,8 @@ function load_mailbox(mailbox) {
             element.addEventListener('click', function() {
                 view_mail(email.id)
             });
-            document.querySelector('#emails-box').append(element);
+            document.querySelector('#emails-box').append(list);
+            document.querySelector('#ul-id').append(element);
 
         })
     });
@@ -144,14 +150,27 @@ function view_mail(email_id) {
                         <hr>
                         <p class="card-text text-end"><i>${email.timestamp}</i></p>
                     </div>
+                    <div class="d-flex justify-content-between card-footer" id="footer">
+                        <button id="reply-btn" class="btn btn-primary">Reply <i class="bi bi-reply"></i></button>
+                    </div>
                 </div>
             `;
 
             // setting 'read' as true on click
             change_sate(email, 'read')
 
+            // creating 'Archive' button, and its logic
+            const archive = document.createElement('button');
+            archive.className = email.archived ? 'btn btn-secondary': 'btn btn-info';
+            archive.innerHTML = email.archived ? 'Unarchive': 'Archive';
+            archive.addEventListener('click', function() {
+                change_sate(email, 'archived');
+            });
+
             // append content to our div
             document.querySelector('#letter-view').append(element);
+            document.querySelector('#footer').append(archive);
+
         });
 }
 
@@ -175,7 +194,7 @@ function change_sate(email, property) {
                 archived: !email.archived
             })
         })
-        .then(response => response.json())
+        .then(() => load_mailbox('inbox'))
     }
 
 }
