@@ -31,7 +31,6 @@ function compose_email() {
 }
 
 function load_mailbox(mailbox) {
-  
     // Show the mailbox and hide other views
     document.querySelector('#emails-view').style.display = 'block';
     document.querySelector('#compose-view').style.display = 'none';
@@ -55,8 +54,8 @@ function load_mailbox(mailbox) {
 
         // creating 'ul' list-group element
         const list = document.createElement('ul');
-        list.className = 'list-group'
-        list.id = 'ul-id'
+        list.className = 'list-group';
+        list.id = 'ul-id';
 
         // Loop over emails and create HTML element for each one
         emails.forEach(email => {
@@ -73,7 +72,7 @@ function load_mailbox(mailbox) {
                 element.innerHTML = `
                     <p>FROM: ${email.sender}</p>
                     <p>Subject: ${email.subject}</p>
-                    <p>${email.timestamp}</p>
+                    <p class="add-archive">${email.timestamp}</p>
                 `;
             }
 
@@ -87,8 +86,31 @@ function load_mailbox(mailbox) {
             element.addEventListener('click', function() {
                 view_mail(email.id)
             });
+
+            // creating archive/unarchive button and logic
+            const archive = document.createElement('button');
+            archive.className = email.archived ? 'btn btn-sm btn-secondary': 'btn btn-sm btn-primary';
+            archive.innerHTML = email.archived ? `<i class="bi bi-bookmark-dash"></i>`: `<i class="bi bi-bookmark-plus"></i>`;
+            archive.id = 'archive-btn'
+
+            // stopPropagation to prevent parent element click trigger
+            archive.addEventListener('click', function(ev) {
+                ev.stopPropagation();
+                change_sate(email, 'archived');
+                if (mailbox === 'inbox') {
+                    load_mailbox('archive')
+                } else {
+                    load_mailbox('inbox')
+                }
+            });
+
             document.querySelector('#emails-box').append(list);
             document.querySelector('#ul-id').append(element);
+
+            // appending archive/unarchive buttons
+            document.querySelectorAll('.add-archive').forEach(row => {
+                row.append(archive)
+            });
 
         })
     });
@@ -151,7 +173,9 @@ function view_mail(email_id) {
                         <p class="card-text text-end"><i>${email.timestamp}</i></p>
                     </div>
                     <div class="d-flex justify-content-between card-footer" id="footer">
-                        <button id="reply-btn" class="btn btn-primary">Reply <i class="bi bi-reply"></i></button>
+                        <button id="reply-btn" class="btn btn-primary ms-auto">
+                            Reply <i class="bi bi-reply"></i>
+                        </button>
                     </div>
                 </div>
             `;
@@ -159,17 +183,8 @@ function view_mail(email_id) {
             // setting 'read' as true on click
             change_sate(email, 'read')
 
-            // creating 'Archive' button, and its logic
-            const archive = document.createElement('button');
-            archive.className = email.archived ? 'btn btn-secondary': 'btn btn-info';
-            archive.innerHTML = email.archived ? 'Unarchive': 'Archive';
-            archive.addEventListener('click', function() {
-                change_sate(email, 'archived');
-            });
-
             // append content to our div
             document.querySelector('#letter-view').append(element);
-            document.querySelector('#footer').append(archive);
 
         });
 }
@@ -184,7 +199,6 @@ function change_sate(email, property) {
                 read: true
             })
         })
-        .then(response => response.json())
 
     // set archived to opposite state
     } else if (property === 'archived') {
@@ -194,7 +208,6 @@ function change_sate(email, property) {
                 archived: !email.archived
             })
         })
-        .then(() => load_mailbox('inbox'))
     }
 
 }
