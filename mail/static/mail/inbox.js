@@ -17,17 +17,33 @@ document.addEventListener('DOMContentLoaded', function() {
 
 });
 
-function compose_email() {
+function compose_email(action, data) {
 
     // Show compose view and hide other views
     document.querySelector('#emails-view').style.display = 'none';
     document.querySelector('#compose-view').style.display = 'block';
     document.querySelector('#letter-view').style.display = 'none';
 
-    // Clear out composition fields
-    document.querySelector('#compose-recipients').value = '';
-    document.querySelector('#compose-subject').value = '';
-    document.querySelector('#compose-body').value = '';
+    if (action === 'reply') {
+        // fill composition fields
+        document.querySelector('#compose-recipients').value = data.recipient;
+
+        // prevent repeat of 'Re:' - The indexOf() method returns -1 if the value is not found.
+        if (data.subject.indexOf('Re: ') === -1) {
+            document.querySelector('#compose-subject').value = 'Re: ' + data.subject;
+        } else {
+            document.querySelector('#compose-subject').value = data.subject;
+        }
+
+        document.querySelector('#compose-body').value = `\n\n<i>On ${data.timestamp}, ${data.recipient} wrote:</i>\n\n<small>${data.body}</small>`
+    } else {
+        // Clear out composition fields
+        document.querySelector('#compose-recipients').value = '';
+        document.querySelector('#compose-subject').value = '';
+        document.querySelector('#compose-body').value = '';
+    }
+
+
 }
 
 function load_mailbox(mailbox) {
@@ -98,9 +114,13 @@ function load_mailbox(mailbox) {
                 ev.stopPropagation();
                 change_sate(email, 'archived');
                 if (mailbox === 'inbox') {
-                    load_mailbox('archive')
+                    load_mailbox('archive');
+                    document.querySelector('#archived').setAttribute('class', 'nav-link active');
+                    document.querySelector('#inbox').setAttribute('class', 'nav-link');
                 } else {
-                    load_mailbox('inbox')
+                    load_mailbox('inbox');
+                    document.querySelector('#inbox').setAttribute('class', 'nav-link active');
+                    document.querySelector('#archived').setAttribute('class', 'nav-link');
                 }
             });
 
@@ -166,9 +186,8 @@ function view_mail(email_id) {
                         FROM: <strong>${email.sender}</strong>
                     </div>
                     <div class="card-header">TO: ${email.recipients}</div>
-                    
                     <div class="card-body">
-                        <p class="card-title">${email.body}</p>
+                        <div class="card-title multiline">${email.body}</div>
                         <hr>
                         <p class="card-text text-end"><i>${email.timestamp}</i></p>
                     </div>
@@ -185,6 +204,18 @@ function view_mail(email_id) {
 
             // append content to our div
             document.querySelector('#letter-view').append(element);
+
+            // creating data to pre-fill reply form in 'compose-email'
+            const data = {
+                subject: email.subject,
+                recipient: email.sender,
+                body: email.body,
+                timestamp: email.timestamp,
+            }
+
+            document.querySelector('#reply-btn').addEventListener("click", function() {
+                compose_email('reply', data);
+            });
 
         });
 }

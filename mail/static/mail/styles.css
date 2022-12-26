@@ -15,6 +15,10 @@ p {
     margin-bottom: 10px;
 }
 
+.multiline {
+    white-space: pre-line;
+}
+
 #read {
     background-color: #e9ecef;
 }
