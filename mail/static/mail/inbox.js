@@ -100,10 +100,10 @@ function load_mailbox(mailbox) {
 
             // on click for each email in mailbox - view that exact email
             element.addEventListener('click', function() {
-                view_mail(email.id)
+                view_mail(email.id, mailbox)
             });
 
-            // creating archive/unarchive button and logic
+            // creating archive/unarchive button and logic for emails list
             const archive = document.createElement('button');
             archive.className = email.archived ? 'btn btn-sm btn-secondary': 'btn btn-sm btn-primary';
             archive.innerHTML = email.archived ? `<i class="bi bi-bookmark-dash"></i>`: `<i class="bi bi-bookmark-plus"></i>`;
@@ -138,29 +138,32 @@ function load_mailbox(mailbox) {
 
 function send_mail() {
 
-  const recipients = document.querySelector('#compose-recipients').value;
-  const subject = document.querySelector('#compose-subject').value;
-  const body = document.querySelector('#compose-body').value;
+    const recipients = document.querySelector('#compose-recipients').value;
+    const subject = document.querySelector('#compose-subject').value;
+    const body = document.querySelector('#compose-body').value;
 
-  fetch('/emails', {
-    method: 'POST',
-    body: JSON.stringify({
-        recipients: recipients,
-        subject: subject,
-        body: body
+    fetch('/emails', {
+        method: 'POST',
+        body: JSON.stringify({
+            recipients: recipients,
+            subject: subject,
+            body: body
+        })
     })
-  })
-  .then(response => response.json())
-  .then(result => {
+    .then(response => response.json())
+    .then(result => {
 
-      // Print result and load 'sent' mailbox
-      console.log(result);
-      load_mailbox('sent');
-  });
+        // Print result and load 'sent' mailbox
+        console.log(result);
+        load_mailbox('sent');
+        document.querySelector('#archived').setAttribute('class', 'nav-link');
+        document.querySelector('#inbox').setAttribute('class', 'nav-link');
+        document.querySelector('#sent').setAttribute('class', 'nav-link active');
+    });
 
 }
 
-function view_mail(email_id) {
+function view_mail(email_id, origin) {
 
     // Show the mailbox and hide other views
     document.querySelector('#emails-view').style.display = 'none';
@@ -192,7 +195,7 @@ function view_mail(email_id) {
                         <p class="card-text text-end"><i>${email.timestamp}</i></p>
                     </div>
                     <div class="d-flex justify-content-between card-footer" id="footer">
-                        <button id="reply-btn" class="btn btn-primary ms-auto">
+                        <button id="reply-btn" class="btn btn-primary" disabled>
                             Reply <i class="bi bi-reply"></i>
                         </button>
                     </div>
@@ -202,8 +205,25 @@ function view_mail(email_id) {
             // setting 'read' as true on click
             change_sate(email, 'read')
 
+            // creating 'Archive' button, and its logic
+            const archive = document.createElement('button');
+            archive.className = email.archived ? 'btn btn-secondary': 'btn btn-info';
+            archive.innerHTML = email.archived ? `Unarchive <i class="bi bi-bookmark-dash"></i>`: `Archive <i class="bi bi-bookmark-plus"></i>`;
+            archive.addEventListener('click', function() {
+                change_sate(email, 'archived');
+                load_mailbox('inbox');
+            });
+
+
             // append content to our div
             document.querySelector('#letter-view').append(element);
+
+            // I'm adding archive button only to 'inbox/archive' mailboxes, also disabling 'reply' button for 'sent' mailbox
+            if (origin !== 'sent') {
+                document.querySelector('#footer').append(archive);
+                document.getElementById('reply-btn').disabled = false;
+            }
+
 
             // creating data to pre-fill reply form in 'compose-email'
             const data = {
