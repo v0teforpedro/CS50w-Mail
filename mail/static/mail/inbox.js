@@ -61,6 +61,32 @@ function load_mailbox(mailbox) {
         <div id="emails-box"></div>
     `;
 
+    // if (mailbox === 'inbox') {
+    //     document.querySelector('#inbox').setAttribute('class', 'nav-link active');
+    //     document.querySelector('#archived').setAttribute('class', 'nav-link');
+    //     document.querySelector('#sent').setAttribute('class', 'nav-link');
+    // } else if (mailbox === 'archive') {
+    //     document.querySelector('#inbox').setAttribute('class', 'nav-link');
+    //     document.querySelector('#archived').setAttribute('class', 'nav-link active');
+    //     document.querySelector('#sent').setAttribute('class', 'nav-link');
+    // } else if (mailbox === 'sent') {
+    //     document.querySelector('#inbox').setAttribute('class', 'nav-link');
+    //     document.querySelector('#archived').setAttribute('class', 'nav-link');
+    //     document.querySelector('#sent').setAttribute('class', 'nav-link active');
+    // }
+
+    const mailboxMap = {
+        inbox: '#inbox',
+        archive: '#archived',
+        sent: '#sent',
+    };
+
+    Object.keys(mailboxMap).forEach(key => {
+        const id = mailboxMap[key];
+        const className = key === mailbox ? 'nav-link active' : 'nav-link';
+        document.querySelector(id).setAttribute('class', className);
+    });
+
     // fetch mailbox data
     fetch(`/emails/${mailbox}`)
     .then(response => response.json())
@@ -115,12 +141,8 @@ function load_mailbox(mailbox) {
                 change_sate(email, 'archived');
                 if (mailbox === 'inbox') {
                     load_mailbox('archive');
-                    document.querySelector('#archived').setAttribute('class', 'nav-link active');
-                    document.querySelector('#inbox').setAttribute('class', 'nav-link');
                 } else {
                     load_mailbox('inbox');
-                    document.querySelector('#inbox').setAttribute('class', 'nav-link active');
-                    document.querySelector('#archived').setAttribute('class', 'nav-link');
                 }
             });
 
@@ -156,9 +178,6 @@ function send_mail() {
         // Print result and load 'sent' mailbox
         console.log(result);
         load_mailbox('sent');
-        document.querySelector('#archived').setAttribute('class', 'nav-link');
-        document.querySelector('#inbox').setAttribute('class', 'nav-link');
-        document.querySelector('#sent').setAttribute('class', 'nav-link active');
     });
 
 }
